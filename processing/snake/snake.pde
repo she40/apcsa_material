@@ -54,32 +54,65 @@ void draw() {
 
 // draw the food item (square) which size is tha variable size
 void drawFood() {
-  // YOUR CODE HERE
+  rect(food.x * size, food.y * size, size, size);
 }
 
 // declare a new pVector (random) for food
 void newFood() {
-  //food = new PVector......
+  food = new PVector(floor(random(w)), floor(random(h)));
 }
 
 // draw snake, consider the snake array size (each square of size size) + square of the current pos
 void drawSnake() {
-  /// YOUR CODE HERE
+  // draw the head of the snake
+  rect(pos.x * size, pos.y * size, size, size);
+  
+  // draw the body of the snake
+  for (PVector p : snake) {
+    rect(p.x * size, p.y * size, size, size);
+  }
 }
 
 void updateSnake() {
   // Add current position(head) to snake ArrayList
+  snake.add(pos.copy());
   
   // Check the size of snake. Remove some items from snake ArrayList if needed
+  if(snake.size() > len) {
+    snake.remove(0);
+  }
   
   // Calculate new position of snake (head). You must use the direction vector for this calculation
+  PVector new_pos = PVector.add(pos, dir);
   
   // If snake (head) hits food, add +1 to the snake size and create a new food
+  if(new_pos.equals(food)) {
+    len++;
+    spd--;
+    newFood();
+  }
   
   // If snake (head) eat itself, gameover, reset()
-  
+  for (PVector p : snake) {
+    if (new_pos.equals(p)) {
+      reset();
+      return;
+    }
+  }
   // If mode 'no_border', snake is out of screen, wraps around
   // If mode 'border', when snake hit a border, gameover, reset()
+  if (pos.x < 0 || pos.x >= w || pos.y < 0 || pos.y >= h) {
+  reset();
+  } 
+  }
+  else if (actual_mode.equals("no_border")) {
+  if (pos.x < 0) pos.x = w - 1;
+  if (pos.x >= w) pos.x = 0;
+  if (pos.y < 0) pos.y = h - 1;
+   if (pos.y >= h) pos.y = 0;
+  }
+}
+  
   
 }
 
@@ -99,7 +132,18 @@ void keyPressed() {
   // DOWN(0, 1)
   // LEFT(-1,0)
   // RIGHT(1,0)
-  
+  if(keyCode == UP_ARROW && dir.y != 1) {
+dir = new PVector(0, -1);
+}
+else if(keyCode == DOWN_ARROW && dir.y != -1) {
+dir = new PVector(0, 1);
+}
+else if(keyCode == LEFT_ARROW && dir.x != 1) {
+dir = new PVector(-1, 0);
+}
+else if(keyCode == RIGHT_ARROW && dir.x != -1) {
+dir = new PVector(1, 0);
+}
 }
 
 // EXTRA FOR STUDENTS WHO FINISH WITH THE REQUIRED TASKS
